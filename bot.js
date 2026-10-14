@@ -982,20 +982,9 @@ process.on('SIGINT', () => {
 });
 
 process.on('SIGTERM', () => {
-    console.log('🛑 Received SIGTERM. Shutting down gracefully...');
-    
-    // Clean up intervals
-    if (global.currentSock && global.currentSock.keepAliveIntervals) {
-        global.currentSock.keepAliveIntervals.forEach(interval => clearInterval(interval));
-    }
-    
-    // Close socket connection
-    if (global.currentSock) {
-        global.currentSock.end();
-    }
-    
-    console.log('👋 Bot stopped successfully');
-    process.exit(0);
+    console.log('🛑 Received SIGTERM. Ignoring - bot will keep running...');
+    // Do NOT exit - let Render restart the process naturally
+    // The MongoDB auth state means we won't need to re-scan QR
 });
 
 // ULTRA-ROBUST Memory monitoring - Never exit, always restart
