@@ -1,4 +1,5 @@
 const { default: makeWASocket, useMultiFileAuthState, fetchLatestBaileysVersion, DisconnectReason, downloadContentFromMessage, isJidBroadcast } = require('@whiskeysockets/baileys');
+const { useMongoAuthState } = require('./mongoAuthState');
 const fs = require('fs');
 const path = require('path');
 const P = require('pino');
@@ -1101,7 +1102,9 @@ async function startBot() {
     try {
         console.log('🚀 Starting ULTRA-ROBUST WhatsApp bot...');
         
-        const { state, saveCreds } = await useMultiFileAuthState('auth_info');
+        const { state, saveCreds } = process.env.MONGODB_URI
+            ? await useMongoAuthState()
+            : await useMultiFileAuthState('auth_info');
         const { version } = await fetchLatestBaileysVersion();
         const sock = makeWASocket({
             version,
