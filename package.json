@@ -14,7 +14,8 @@
     "node-fetch": "^2.7.0",
     "pino": "^8.17.2",
     "qrcode": "^1.5.3",
-    "qrcode-terminal": "^0.12.0"
+    "qrcode-terminal": "^0.12.0",
+    "sharp": "^0.32.6"
   },
   "keywords": [
     "whatsapp",

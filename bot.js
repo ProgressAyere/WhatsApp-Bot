@@ -3451,6 +3451,7 @@ async function handleSticker(sock, msg) {
         }
 
         console.log(`🎨 Converting ${mediaType} to sticker...`);
+        await reply(sock, msg, '⏳ Creating sticker... Please wait...');
 
         // Download the media
         let buffer = null;
@@ -3475,38 +3476,39 @@ async function handleSticker(sock, msg) {
             return await reply(sock, msg, '❌ File too large! Maximum size is 5MB for sticker conversion.');
         }
 
-        // Convert to sticker using free API
+        // Convert to sticker with proper WebP format
         try {
-            console.log('🔄 Converting to sticker...');
+            console.log('🔄 Converting to WebP sticker format...');
             
-            // For now, we'll send the image directly as a sticker
-            // WhatsApp will handle the conversion automatically
-            if (mediaType === 'image') {
-                await sock.sendMessage(msg.key.remoteJid, {
-                    sticker: buffer
-                }, { quoted: msg });
-                
-                console.log('✅ Image sticker sent successfully');
-                await reply(sock, msg, '✅ Image converted to sticker successfully! 🎨');
-            } else if (mediaType === 'video') {
-                // For videos, we'll send as a video sticker
-                await sock.sendMessage(msg.key.remoteJid, {
-                    sticker: buffer,
-                    isAnimated: true
-                }, { quoted: msg });
-                
-                console.log('✅ Video sticker sent successfully');
-                await reply(sock, msg, '✅ Video converted to animated sticker successfully! 🎬');
-            }
+            const sharp = require('sharp');
+            
+            // Convert to WebP with proper dimensions for WhatsApp stickers (512x512)
+            const webpBuffer = await sharp(buffer)
+                .resize(512, 512, {
+                    fit: 'contain',
+                    background: { r: 0, g: 0, b: 0, alpha: 0 }
+                })
+                .webp()
+                .toBuffer();
+            
+            console.log(`✅ Converted to WebP, size: ${webpBuffer.length} bytes`);
+            
+            // Send as sticker
+            await sock.sendMessage(msg.key.remoteJid, {
+                sticker: webpBuffer
+            }, { quoted: msg });
+            
+            console.log('✅ Sticker sent successfully');
+            await reply(sock, msg, '✅ Sticker created successfully! 🎨');
 
         } catch (conversionError) {
             console.error('❌ Sticker conversion error:', conversionError);
-            await reply(sock, msg, '❌ Failed to convert to sticker. Please try with a different image/video.');
+            await reply(sock, msg, `❌ Failed to convert to sticker: ${conversionError.message}\n\n💡 Try with a different image/video.`);
         }
 
     } catch (error) {
         console.error('❌ Sticker handler error:', error);
-        await reply(sock, msg, '❌ An error occurred while creating the sticker. Please try again.');
+        await reply(sock, msg, `❌ An error occurred while creating the sticker: ${error.message}`);
     }
 }
 
