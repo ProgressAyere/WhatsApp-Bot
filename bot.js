@@ -1466,25 +1466,8 @@ async function handleEmojiQuiz(sock, msg) {
     await reply(sock, msg, `🎯 *EMOJI QUIZ* 🎯\n\n🤔 *Guess the word:*\n${quiz.emoji}\n\n💡 *Hint:* It's a common word\n🎮 *Answer:* ${quiz.answer}\n\n🎯 *How to play:* Just type !emojiquiz for a new quiz!`);
 }
 
-// Riddle Game
-async function handleRiddle(sock, msg) {
-    const riddles = [
-        { question: "What has keys, but no locks; space, but no room; and you can enter, but not go in?", answer: "KEYBOARD" },
-        { question: "What gets wetter and wetter the more it dries?", answer: "TOWEL" },
-        { question: "What has a head and a tail but no body?", answer: "COIN" },
-        { question: "What comes once in a minute, twice in a moment, but never in a thousand years?", answer: "LETTER M" },
-        { question: "What has cities, but no houses; forests, but no trees; and rivers, but no water?", answer: "MAP" },
-        { question: "What is always in front of you but can't be seen?", answer: "FUTURE" },
-        { question: "What breaks when you say it?", answer: "SILENCE" },
-        { question: "What has legs, but doesn't walk?", answer: "TABLE" },
-        { question: "What has one eye, but can't see?", answer: "NEEDLE" },
-        { question: "What can travel around the world while sitting in a corner?", answer: "STAMP" }
-    ];
-    
-    const riddle = riddles[Math.floor(Math.random() * riddles.length)];
-    
-    await reply(sock, msg, `🧩 *RIDDLE TIME* 🧩\n\n🤔 *Riddle:*\n${riddle.question}\n\n💡 *Answer:* ${riddle.answer}\n\n🎯 *How to play:* Type !riddle for a new riddle!`);
-}
+// Riddle Game - Now loads from external file with 100 riddles
+// (See riddles.js for the full list)
 
 // Truth or Dare Game
 async function handleTruthOrDare(sock, msg) {
@@ -4044,13 +4027,8 @@ async function handleDadJoke(sock, msg) {
 
 async function handleRiddle(sock, msg) {
     try {
-        const riddles = [
-            { question: "What has keys, but no locks; space, but no room; and you can enter, but not go in?", answer: "A keyboard" },
-            { question: "What gets wetter and wetter the more it dries?", answer: "A towel" },
-            { question: "What has a head and a tail but no body?", answer: "A coin" },
-            { question: "What comes once in a minute, twice in a moment, but never in a thousand years?", answer: "The letter 'M'" },
-            { question: "What is always in front of you but can't be seen?", answer: "The future" }
-        ];
+        // Load 100 riddles from external file
+        const riddles = require('./riddles.js');
         
         const randomRiddle = riddles[Math.floor(Math.random() * riddles.length)];
         
