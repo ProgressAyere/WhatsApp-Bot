@@ -1068,7 +1068,9 @@ const antilinkSettings = {};
 
 // Hangman game state (in-memory, keyed by chat ID)
 const hangmanGames = new Map();
+const hangmanRecentWords = new Map(); // Track recent words per chat to avoid repeats
 const HANGMAN_TIMEOUT = 5 * 60 * 1000; // 5 minutes
+const HANGMAN_RECENT_LIMIT = 50; // Remember last 50 words per chat
 const LINK_PATTERNS = [
     /https?:\/\/[^\s]+/gi,
     /www\.[^\s]+/gi,
@@ -1324,7 +1326,19 @@ async function handleWordle(sock, msg, guess) {
 
 // Hangman Game
 async function handleHangman(sock, msg, guess) {
-    const words = ['PYTHON', 'JAVASCRIPT', 'PROGRAMMING', 'COMPUTER', 'ALGORITHM', 'DATABASE', 'NETWORK', 'SECURITY', 'SOFTWARE', 'HARDWARE'];
+    // Load 200+ words from external file
+    const wordLists = require('./hangman-words.js');
+    
+    // Combine all categories for random selection
+    const allWords = [
+        ...wordLists.easy,
+        ...wordLists.medium,
+        ...wordLists.hard,
+        ...wordLists.tech,
+        ...wordLists.animals,
+        ...wordLists.places
+    ];
+    
     const chatId = msg.key.remoteJid;
     const maxAttempts = 6;
     const HANGMAN_STAGES = ['😐','😟','😰','😨','😱','💀'];
@@ -1340,16 +1354,52 @@ async function handleHangman(sock, msg, guess) {
 
     // Start a new game if none is active
     if (!hangmanGames.has(chatId)) {
-        const word = words[Math.floor(Math.random() * words.length)];
+        // Get recent words for this chat (to avoid repeats)
+        const recentWords = hangmanRecentWords.get(chatId) || [];
+        
+        // Filter out recently used words
+        const availableWords = allWords.filter(word => !recentWords.includes(word));
+        
+        // If we've used all words, clear the history and start fresh
+        const wordsToChooseFrom = availableWords.length > 0 ? availableWords : allWords;
+        
+        // Randomly select a word
+        const word = wordsToChooseFrom[Math.floor(Math.random() * wordsToChooseFrom.length)];
+        
+        // Add this word to recent words
+        recentWords.push(word);
+        
+        // Keep only the last 50 words (or 20% of total, whichever is smaller)
+        const maxRecent = Math.min(HANGMAN_RECENT_LIMIT, Math.floor(allWords.length * 0.2));
+        if (recentWords.length > maxRecent) {
+            recentWords.shift(); // Remove oldest word
+        }
+        
+        // Update recent words for this chat
+        hangmanRecentWords.set(chatId, recentWords);
+        
+        // Determine category and difficulty
+        let category = 'General';
+        let difficulty = 'Medium';
+        
+        if (wordLists.easy.includes(word)) { category = 'Easy'; difficulty = '⭐'; }
+        else if (wordLists.medium.includes(word)) { category = 'Medium'; difficulty = '⭐⭐'; }
+        else if (wordLists.hard.includes(word)) { category = 'Hard'; difficulty = '⭐⭐⭐'; }
+        else if (wordLists.tech.includes(word)) { category = 'Tech'; difficulty = '⭐⭐'; }
+        else if (wordLists.animals.includes(word)) { category = 'Animals'; difficulty = '⭐⭐'; }
+        else if (wordLists.places.includes(word)) { category = 'Places'; difficulty = '⭐⭐'; }
+        
         hangmanGames.set(chatId, {
             word,
             guessed: new Set(),
             wrongCount: 0,
-            startTime: Date.now()
+            startTime: Date.now(),
+            category,
+            difficulty
         });
         const display = word.split('').map(() => '_').join(' ');
         const timeLeft = Math.floor(HANGMAN_TIMEOUT / 60000);
-        return await reply(sock, msg, `🎯 *HANGMAN GAME* 🎯\n\n📝 *How to play:*\n• Type !hangman <letter> to guess\n• You have 6 wrong attempts\n• You have ${timeLeft} minutes before the game resets\n\n🔤 *Word:* ${display} (${word.length} letters)\n\n💡 *Example:* !hangman A\n\n🎮 *Game started! Guess a letter!*`);
+        return await reply(sock, msg, `🎯 *HANGMAN GAME* 🎯\n\n📝 *How to play:*\n• Type !hangman <letter> to guess\n• You have 6 wrong attempts\n• You have ${timeLeft} minutes before the game resets\n\n🔤 *Word:* ${display} (${word.length} letters)\n🏷️ *Category:* ${category}\n${difficulty} *Difficulty*\n\n💡 *Example:* !hangman A\n\n🎮 *Game started! Guess a letter!*`);
     }
 
     const game = hangmanGames.get(chatId);
@@ -1359,7 +1409,7 @@ async function handleHangman(sock, msg, guess) {
     // No letter provided — show current game state
     if (!guess) {
         const display = game.word.split('').map(l => game.guessed.has(l) ? l : '_').join(' ');
-        return await reply(sock, msg, `🎯 *HANGMAN - GAME IN PROGRESS* 🎯\n\n🔤 *Word:* ${display}\n📝 *Guessed:* ${Array.from(game.guessed).join(', ') || 'None'}\n💀 *Wrong attempts:* ${game.wrongCount}/${maxAttempts} ${HANGMAN_STAGES[game.wrongCount - 1] || '😐'}\n⏰ *Time left:* ~${timeLeft} min\n\n💡 Type !hangman <letter> to guess`);
+        return await reply(sock, msg, `🎯 *HANGMAN - GAME IN PROGRESS* 🎯\n\n🔤 *Word:* ${display}\n🏷️ *Category:* ${game.category} ${game.difficulty}\n📝 *Guessed:* ${Array.from(game.guessed).join(', ') || 'None'}\n💀 *Wrong attempts:* ${game.wrongCount}/${maxAttempts} ${HANGMAN_STAGES[game.wrongCount - 1] || '😐'}\n⏰ *Time left:* ~${timeLeft} min\n\n💡 Type !hangman <letter> to guess`);
     }
 
     guess = guess.toUpperCase();
@@ -1379,14 +1429,14 @@ async function handleHangman(sock, msg, guess) {
         // Correct guess — check if word is fully revealed
         if (!display.includes('_')) {
             hangmanGames.delete(chatId);
-            return await reply(sock, msg, `🎉 *YOU WON!* 🎉\n\n🎯 The word was: *${game.word}*\n${display}\n\n🏆 *Excellent! Type !hangman to play again!*`);
+            return await reply(sock, msg, `🎉 *YOU WON!* 🎉\n\n🎯 The word was: *${game.word}*\n${display}\n🏷️ *Category:* ${game.category} ${game.difficulty}\n\n🏆 *Excellent! Type !hangman to play again!*`);
         }
         await reply(sock, msg, `✅ *Correct! "${guess}" is in the word!*\n\n🔤 *Word:* ${display}\n📝 *Guessed:* ${Array.from(game.guessed).join(', ')}\n💀 *Wrong attempts:* ${game.wrongCount}/${maxAttempts}\n⏰ *Time left:* ~${timeLeft} min`);
     } else {
         game.wrongCount++;
         if (game.wrongCount >= maxAttempts) {
             hangmanGames.delete(chatId);
-            return await reply(sock, msg, `💀 *GAME OVER!* 💀\n\n🎯 The word was: *${game.word}*\n📝 *Guessed:* ${Array.from(game.guessed).join(', ')}\n\n😔 Better luck next time! Type !hangman to play again.`);
+            return await reply(sock, msg, `💀 *GAME OVER!* 💀\n\n🎯 The word was: *${game.word}*\n🏷️ *Category:* ${game.category} ${game.difficulty}\n📝 *Guessed:* ${Array.from(game.guessed).join(', ')}\n\n😔 Better luck next time! Type !hangman to play again.`);
         }
         await reply(sock, msg, `❌ *Wrong! "${guess}" is not in the word.* ${HANGMAN_STAGES[game.wrongCount - 1]}\n\n🔤 *Word:* ${display}\n📝 *Guessed:* ${Array.from(game.guessed).join(', ')}\n💀 *Wrong attempts:* ${game.wrongCount}/${maxAttempts}\n⏰ *Time left:* ~${timeLeft} min`);
     }
