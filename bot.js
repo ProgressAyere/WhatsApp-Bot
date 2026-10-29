@@ -624,6 +624,24 @@ const COMMAND_DOCS = {
         example: "!hangman A",
         category: "Games"
     },
+    '!footballteam': {
+        description: "Play Football Team guessing game - guess the team letter by letter",
+        usage: "!footballteam [letter]",
+        example: "!footballteam A",
+        category: "Games"
+    },
+    '!footballplayer': {
+        description: "Guess the football player from jersey numbers and team clues",
+        usage: "!footballplayer [player_name]",
+        example: "!footballplayer MESSI",
+        category: "Games"
+    },
+    '!footballtrivia': {
+        description: "Football trivia questions from 2025 and 2026 seasons",
+        usage: "!footballtrivia <year> [answer]",
+        example: "!footballtrivia 2025",
+        category: "Games"
+    },
     '!tictactoe': {
         description: "Play Tic Tac Toe against the bot",
         usage: "!tictactoe <position>",
@@ -1045,12 +1063,12 @@ tools.setReplyFunction(reply);
 
 // Command list
 const COMMANDS = [
-    '!ping', '!debug', '!help', '!time', '!datediff', '!timein', '!shorten', '!tempmail', '!color', '!password', '!motivate', '!joke', '!quote', '!trivia', '!weather', '!define', '!country', '!coin', '!crypto', '!reverse', '!rps', '!textart', '!poll', '!vote', '!xp', '!rank', '!binary', '!unbinary', '!emoji', '!countdown', '!bible', '!fact', '!wordday', '!tagall', '!list', '!catfact', '!dogfact', '!remind', '!uuid', '!roll', '!palindrome', '!capitalize', '!echo', '!creator', '!kick', '!add', '!promote', '!demote', '!ban', '!unban', '!groupinfo', '!setdesc', '!setname', '!vv', '!viewonce', '!test', '!sticker', '!wordle', '!hangman', '!tictactoe', '!numberguess', '!wordchain', '!emojiquiz', '!riddle', '!truthordare', '!wouldyourather', '!neverhaveiever', '!typinggame', '!addsudo', '!removesudo', '!listsudo', '!owner'
+    '!ping', '!debug', '!help', '!time', '!datediff', '!timein', '!shorten', '!tempmail', '!color', '!password', '!motivate', '!joke', '!quote', '!trivia', '!weather', '!define', '!country', '!coin', '!crypto', '!reverse', '!rps', '!textart', '!poll', '!vote', '!xp', '!rank', '!binary', '!unbinary', '!emoji', '!countdown', '!bible', '!fact', '!wordday', '!tagall', '!list', '!catfact', '!dogfact', '!remind', '!uuid', '!roll', '!palindrome', '!capitalize', '!echo', '!creator', '!kick', '!add', '!promote', '!demote', '!ban', '!unban', '!groupinfo', '!setdesc', '!setname', '!vv', '!viewonce', '!test', '!sticker', '!wordle', '!hangman', '!footballteam', '!footballplayer', '!footballtrivia', '!tictactoe', '!numberguess', '!wordchain', '!emojiquiz', '!riddle', '!truthordare', '!wouldyourather', '!neverhaveiever', '!typinggame', '!addsudo', '!removesudo', '!listsudo', '!owner'
 ];
 
 // Separate commands by type
 const PRIVATE_COMMANDS = [
-    '!ping', '!debug', '!help', '!time', '!datediff', '!timein', '!shorten', '!tempmail', '!color', '!password', '!motivate', '!joke', '!quote', '!trivia', '!weather', '!define', '!country', '!coin', '!crypto', '!reverse', '!rps', '!textart', '!poll', '!vote', '!xp', '!rank', '!binary', '!unbinary', '!emoji', '!countdown', '!bible', '!fact', '!wordday', '!list', '!catfact', '!dogfact', '!remind', '!uuid', '!roll', '!palindrome', '!capitalize', '!echo', '!creator', '!vv', '!viewonce', '!test', '!sticker', '!wordle', '!hangman', '!tictactoe', '!numberguess', '!wordchain', '!emojiquiz', '!riddle', '!truthordare', '!wouldyourather', '!neverhaveiever', '!typinggame', '!addsudo', '!removesudo', '!listsudo', '!owner'
+    '!ping', '!debug', '!help', '!time', '!datediff', '!timein', '!shorten', '!tempmail', '!color', '!password', '!motivate', '!joke', '!quote', '!trivia', '!weather', '!define', '!country', '!coin', '!crypto', '!reverse', '!rps', '!textart', '!poll', '!vote', '!xp', '!rank', '!binary', '!unbinary', '!emoji', '!countdown', '!bible', '!fact', '!wordday', '!list', '!catfact', '!dogfact', '!remind', '!uuid', '!roll', '!palindrome', '!capitalize', '!echo', '!creator', '!vv', '!viewonce', '!test', '!sticker', '!wordle', '!hangman', '!footballteam', '!footballplayer', '!footballtrivia', '!tictactoe', '!numberguess', '!wordchain', '!emojiquiz', '!riddle', '!truthordare', '!wouldyourather', '!neverhaveiever', '!typinggame', '!addsudo', '!removesudo', '!listsudo', '!owner'
 ];
 
 const GROUP_ONLY_COMMANDS = [
@@ -1071,6 +1089,27 @@ const hangmanGames = new Map();
 const hangmanRecentWords = new Map(); // Track recent words per chat to avoid repeats
 const HANGMAN_TIMEOUT = 5 * 60 * 1000; // 5 minutes
 const HANGMAN_RECENT_LIMIT = 50; // Remember last 50 words per chat
+
+// Football Team game state (same structure as hangman)
+const footballGames = new Map();
+const footballRecentTeams = new Map(); // Track recent teams per chat to avoid repeats
+const FOOTBALL_TIMEOUT = 5 * 60 * 1000; // 5 minutes
+const FOOTBALL_RECENT_LIMIT = 50; // Remember last 50 teams per chat
+
+// Number Guess game state
+const numberGuessGames = new Map();
+const NUMBERGUESS_TIMEOUT = 5 * 60 * 1000; // 5 minutes
+
+// Football Player game state
+const footballPlayerGames = new Map();
+const footballPlayerRecentPlayers = new Map();
+const FOOTBALLPLAYER_TIMEOUT = 5 * 60 * 1000; // 5 minutes
+const MAX_RECENT_PLAYERS = 50;
+
+// Football Trivia game state
+const footballTriviaGames = new Map();
+const footballTriviaRecentQuestions = new Map();
+const MAX_RECENT_TRIVIA = 10; // Track last 10 questions per chat
 const LINK_PATTERNS = [
     /https?:\/\/[^\s]+/gi,
     /www\.[^\s]+/gi,
@@ -1442,6 +1481,136 @@ async function handleHangman(sock, msg, guess) {
     }
 }
 
+// Football Team Game (works exactly like Hangman)
+async function handleFootballTeam(sock, msg, guess) {
+    // Load 200+ football teams from external file
+    const teamLists = require('./football-teams.js');
+    
+    // Combine all leagues for random selection
+    const allTeams = [
+        ...teamLists.premierLeague,
+        ...teamLists.laLiga,
+        ...teamLists.serieA,
+        ...teamLists.bundesliga,
+        ...teamLists.ligue1,
+        ...teamLists.portugal,
+        ...teamLists.eredivisie,
+        ...teamLists.africa,
+        ...teamLists.southAmerica,
+        ...teamLists.otherEurope
+    ];
+    
+    const chatId = msg.key.remoteJid;
+    const maxAttempts = 6;
+    const FOOTBALL_STAGES = ['⚽','😐','😟','😰','😨','💀'];
+
+    // Check if there's an active game and if it has expired
+    if (footballGames.has(chatId)) {
+        const existing = footballGames.get(chatId);
+        if (Date.now() - existing.startTime >= FOOTBALL_TIMEOUT) {
+            footballGames.delete(chatId);
+            await reply(sock, msg, `⏰ *TIME'S UP!*\n\nThe previous game expired! The team was: *${existing.team}*\n\n⚽ Starting a new game now...`);
+        }
+    }
+
+    // Start a new game if none is active
+    if (!footballGames.has(chatId)) {
+        // Get recent teams for this chat (to avoid repeats)
+        const recentTeams = footballRecentTeams.get(chatId) || [];
+        
+        // Filter out recently used teams
+        const availableTeams = allTeams.filter(team => !recentTeams.includes(team));
+        
+        // If we've used all teams, clear the history and start fresh
+        const teamsToChooseFrom = availableTeams.length > 0 ? availableTeams : allTeams;
+        
+        // Randomly select a team
+        const team = teamsToChooseFrom[Math.floor(Math.random() * teamsToChooseFrom.length)];
+        
+        // Add this team to recent teams
+        recentTeams.push(team);
+        
+        // Keep only the last 50 teams
+        const maxRecent = Math.min(FOOTBALL_RECENT_LIMIT, Math.floor(allTeams.length * 0.2));
+        if (recentTeams.length > maxRecent) {
+            recentTeams.shift(); // Remove oldest team
+        }
+        
+        // Update recent teams for this chat
+        footballRecentTeams.set(chatId, recentTeams);
+        
+        // Determine league/region
+        let league = 'International';
+        
+        if (teamLists.premierLeague.includes(team)) { league = '🏴󠁧󠁢󠁥󠁮󠁧󠁿 Premier League'; }
+        else if (teamLists.laLiga.includes(team)) { league = '🇪🇸 La Liga'; }
+        else if (teamLists.serieA.includes(team)) { league = '🇮🇹 Serie A'; }
+        else if (teamLists.bundesliga.includes(team)) { league = '🇩🇪 Bundesliga'; }
+        else if (teamLists.ligue1.includes(team)) { league = '🇫🇷 Ligue 1'; }
+        else if (teamLists.portugal.includes(team)) { league = '🇵🇹 Portugal'; }
+        else if (teamLists.eredivisie.includes(team)) { league = '🇳🇱 Eredivisie'; }
+        else if (teamLists.africa.includes(team)) { league = '🌍 Africa'; }
+        else if (teamLists.southAmerica.includes(team)) { league = '🌎 South America'; }
+        else if (teamLists.otherEurope.includes(team)) { league = '🇪🇺 Europe'; }
+        
+        footballGames.set(chatId, {
+            team,
+            guessed: new Set(),
+            wrongCount: 0,
+            startTime: Date.now(),
+            league
+        });
+        const display = team.split('').map(char => char === ' ' ? ' ' : '_').join(' ');
+        const timeLeft = Math.floor(FOOTBALL_TIMEOUT / 60000);
+        return await reply(sock, msg, `⚽ *FOOTBALL TEAM GAME* ⚽\n\n📝 *How to play:*\n• Type !footballteam <letter> to guess\n• You have 6 wrong attempts\n• You have ${timeLeft} minutes before the game resets\n\n🔤 *Team:* ${display} (${team.length} letters)\n🏆 *League:* ${league}\n\n💡 *Example:* !footballteam A\n\n⚽ *Game started! Guess a letter!*`);
+    }
+
+    const game = footballGames.get(chatId);
+    const timeElapsed = Date.now() - game.startTime;
+    const timeLeft = Math.ceil((FOOTBALL_TIMEOUT - timeElapsed) / 60000);
+
+    // No letter provided — show current game state
+    if (!guess) {
+        const display = game.team.split('').map(char => {
+            if (char === ' ') return ' ';
+            return game.guessed.has(char) ? char : '_';
+        }).join(' ');
+        return await reply(sock, msg, `⚽ *FOOTBALL TEAM - GAME IN PROGRESS* ⚽\n\n🔤 *Team:* ${display}\n🏆 *League:* ${game.league}\n📝 *Guessed:* ${Array.from(game.guessed).join(', ') || 'None'}\n💀 *Wrong attempts:* ${game.wrongCount}/${maxAttempts} ${FOOTBALL_STAGES[game.wrongCount] || '⚽'}\n⏰ *Time left:* ~${timeLeft} min\n\n💡 Type !footballteam <letter> to guess`);
+    }
+
+    guess = guess.toUpperCase();
+
+    if (guess.length !== 1 || !/[A-Z]/.test(guess)) {
+        return await reply(sock, msg, '❌ Please enter a single letter!');
+    }
+
+    if (game.guessed.has(guess)) {
+        return await reply(sock, msg, `❌ You already guessed *${guess}*! Try a different letter.\n📝 Guessed so far: ${Array.from(game.guessed).join(', ')}`);
+    }
+
+    game.guessed.add(guess);
+    const display = game.team.split('').map(char => {
+        if (char === ' ') return ' ';
+        return game.guessed.has(char) ? char : '_';
+    }).join(' ');
+
+    if (game.team.includes(guess)) {
+        // Correct guess — check if team is fully revealed
+        if (!display.includes('_')) {
+            footballGames.delete(chatId);
+            return await reply(sock, msg, `🎉 *YOU WON!* 🎉\n\n⚽ The team was: *${game.team}*\n${display}\n🏆 *League:* ${game.league}\n\n🏆 *Excellent! Type !footballteam to play again!*`);
+        }
+        await reply(sock, msg, `✅ *Correct! "${guess}" is in the team name!*\n\n🔤 *Team:* ${display}\n📝 *Guessed:* ${Array.from(game.guessed).join(', ')}\n💀 *Wrong attempts:* ${game.wrongCount}/${maxAttempts}\n⏰ *Time left:* ~${timeLeft} min`);
+    } else {
+        game.wrongCount++;
+        if (game.wrongCount >= maxAttempts) {
+            footballGames.delete(chatId);
+            return await reply(sock, msg, `💀 *GAME OVER!* 💀\n\n⚽ The team was: *${game.team}*\n🏆 *League:* ${game.league}\n📝 *Guessed:* ${Array.from(game.guessed).join(', ')}\n\n😔 Better luck next time! Type !footballteam to play again.`);
+        }
+        await reply(sock, msg, `❌ *Wrong! "${guess}" is not in the team name.* ${FOOTBALL_STAGES[game.wrongCount]}\n\n🔤 *Team:* ${display}\n📝 *Guessed:* ${Array.from(game.guessed).join(', ')}\n💀 *Wrong attempts:* ${game.wrongCount}/${maxAttempts}\n⏰ *Time left:* ~${timeLeft} min`);
+    }
+}
+
 // Tic Tac Toe Game
 async function handleTicTacToe(sock, msg, move) {
     if (!move) {
@@ -1462,24 +1631,225 @@ async function handleTicTacToe(sock, msg, move) {
 
 // Number Guessing Game
 async function handleNumberGuess(sock, msg, guess) {
-    const targetNumber = Math.floor(Math.random() * 100) + 1;
+    const chatId = msg.key.remoteJid;
     
-    if (!guess) {
-        return await reply(sock, msg, `🎯 *NUMBER GUESSING GAME* 🎯\n\n📝 *How to play:*\n• Type !numberguess <number>\n• Guess a number between 1-100\n• I'll tell you if it's higher or lower\n\n💡 *Example:* !numberguess 50\n\n🎮 *Ready to play?* Guess a number!`);
+    // Get or create game state for this chat
+    let game = numberGuessGames.get(chatId);
+    
+    // Check if there's an existing game and if it's expired
+    if (game) {
+        const elapsed = Date.now() - game.startTime;
+        if (elapsed > NUMBERGUESS_TIMEOUT) {
+            // Game expired, show answer and clear
+            await reply(sock, msg, `⏰ *TIME'S UP!* ⏰\n\n🎯 The correct number was: *${game.targetNumber}*\n\n🎮 Starting a new game...`);
+            numberGuessGames.delete(chatId);
+            game = null;
+        }
     }
     
+    // If no guess provided, start new game or show instructions
+    if (!guess) {
+        if (!game) {
+            // Start new game
+            const targetNumber = Math.floor(Math.random() * 100) + 1;
+            numberGuessGames.set(chatId, {
+                targetNumber,
+                guesses: [],
+                startTime: Date.now()
+            });
+            return await reply(sock, msg, `🎯 *NUMBER GUESSING GAME* 🎯\n\n📝 *How to play:*\n• Guess a number between 1-100\n• I'll tell you if it's higher or lower\n• You have 5 minutes to guess!\n\n💡 *Example:* !numberguess 50\n\n🎮 *Game started!* Make your first guess!`);
+        } else {
+            return await reply(sock, msg, `🎯 *GAME IN PROGRESS* 🎯\n\n📊 *Guesses so far:* ${game.guesses.join(', ')}\n⏱️ *Time remaining:* ${Math.floor((NUMBERGUESS_TIMEOUT - (Date.now() - game.startTime)) / 1000)}s\n\n🎮 *Type !numberguess <number> to guess!*`);
+        }
+    }
+    
+    // If no active game, start one first
+    if (!game) {
+        const targetNumber = Math.floor(Math.random() * 100) + 1;
+        game = {
+            targetNumber,
+            guesses: [],
+            startTime: Date.now()
+        };
+        numberGuessGames.set(chatId, game);
+    }
+    
+    // Validate the guess
     const userGuess = parseInt(guess);
     if (isNaN(userGuess) || userGuess < 1 || userGuess > 100) {
         return await reply(sock, msg, '❌ Please enter a number between 1-100!');
     }
     
-    if (userGuess === targetNumber) {
-        await reply(sock, msg, `🎉 *CONGRATULATIONS!* 🎉\n\n🎯 You guessed it: *${targetNumber}*\n\n🏆 *Perfect guess!*`);
-    } else if (userGuess < targetNumber) {
-        await reply(sock, msg, `📈 *Higher!*\n\n🎯 Your guess: ${userGuess}\n💡 The number is higher than ${userGuess}\n\n🎮 Try again with !numberguess <number>`);
-    } else {
-        await reply(sock, msg, `📉 *Lower!*\n\n🎯 Your guess: ${userGuess}\n💡 The number is lower than ${userGuess}\n\n🎮 Try again with !numberguess <number>`);
+    // Check if already guessed
+    if (game.guesses.includes(userGuess)) {
+        return await reply(sock, msg, `🔄 You already guessed *${userGuess}*!\n\n📊 Your guesses: ${game.guesses.join(', ')}\n\n🎮 Try a different number!`);
     }
+    
+    // Add guess to history
+    game.guesses.push(userGuess);
+    
+    // Check if correct
+    if (userGuess === game.targetNumber) {
+        const attempts = game.guesses.length;
+        numberGuessGames.delete(chatId);
+        await reply(sock, msg, `🎉 *CONGRATULATIONS!* 🎉\n\n🎯 You guessed it: *${game.targetNumber}*\n📊 Attempts: ${attempts}\n📝 Your guesses: ${game.guesses.join(', ')}\n\n🏆 *Perfect!* Game over!\n\n🎮 Type !numberguess to start a new game!`);
+    } else if (userGuess < game.targetNumber) {
+        await reply(sock, msg, `📈 *Higher!*\n\n🎯 Your guess: ${userGuess}\n💡 The number is *higher* than ${userGuess}\n📊 Attempts: ${game.guesses.length}\n⏱️ Time left: ${Math.floor((NUMBERGUESS_TIMEOUT - (Date.now() - game.startTime)) / 1000)}s\n\n🎮 Try again with !numberguess <number>`);
+    } else {
+        await reply(sock, msg, `📉 *Lower!*\n\n🎯 Your guess: ${userGuess}\n💡 The number is *lower* than ${userGuess}\n📊 Attempts: ${game.guesses.length}\n⏱️ Time left: ${Math.floor((NUMBERGUESS_TIMEOUT - (Date.now() - game.startTime)) / 1000)}s\n\n🎮 Try again with !numberguess <number>`);
+    }
+}
+
+// Football Player Trivia Game
+async function handleFootballPlayer(sock, msg, guess) {
+    const chatId = msg.key.remoteJid;
+    const footballPlayers = require('./football-players.js');
+    
+    // Get or create game state for this chat
+    let game = footballPlayerGames.get(chatId);
+    
+    // Check if there's an existing game and if it's expired
+    if (game) {
+        const elapsed = Date.now() - game.startTime;
+        if (elapsed > FOOTBALLPLAYER_TIMEOUT) {
+            // Game expired, show answer and clear
+            await reply(sock, msg, `⏰ *TIME'S UP!* ⏰\n\n⚽ The correct answer was: *${game.player.name}*\n\n📊 *Player Details:*\n🏟️ Club: ${game.player.club} (#${game.player.clubJersey})\n🌍 National: ${game.player.national} (#${game.player.nationalJersey})\n\n🎮 Starting a new game...`);
+            footballPlayerGames.delete(chatId);
+            game = null;
+        }
+    }
+    
+    // If no game active, start a new one
+    if (!game) {
+        // Get recent players for this chat to avoid repetition
+        let recentPlayers = footballPlayerRecentPlayers.get(chatId) || [];
+        
+        // Filter out recently used players
+        let availablePlayers = footballPlayers.filter(p => !recentPlayers.includes(p.name));
+        
+        // If we've exhausted all players, reset the recent list
+        if (availablePlayers.length === 0) {
+            recentPlayers = [];
+            availablePlayers = footballPlayers;
+        }
+        
+        // Select random player
+        const selectedPlayer = availablePlayers[Math.floor(Math.random() * availablePlayers.length)];
+        
+        // Add to recent players list
+        recentPlayers.push(selectedPlayer.name);
+        if (recentPlayers.length > MAX_RECENT_PLAYERS) {
+            recentPlayers.shift(); // Remove oldest
+        }
+        footballPlayerRecentPlayers.set(chatId, recentPlayers);
+        
+        // Create hints
+        const clubFirstLetter = selectedPlayer.club.charAt(0);
+        const nationalFirstLetter = selectedPlayer.national.charAt(0);
+        const nameLastLetter = selectedPlayer.name.charAt(selectedPlayer.name.length - 1);
+        
+        // Store game state
+        game = {
+            player: selectedPlayer,
+            startTime: Date.now(),
+            guesses: []
+        };
+        footballPlayerGames.set(chatId, game);
+        
+        // Send question
+        const question = `⚽ *GUESS THE FOOTBALL PLAYER* ⚽\n\n🔍 *Clues:*\n📌 Jersey number for club: *${selectedPlayer.clubJersey}*\n📌 Jersey number for national team: *${selectedPlayer.nationalJersey}*\n🏟️ Club team starts with: *${clubFirstLetter}*\n🌍 National team starts with: *${nationalFirstLetter}*\n📝 Player name ends with: *${nameLastLetter}*\n\n⏱️ *You have 5 minutes to guess!*\n\n💡 *How to answer:* Reply with the player's last name\n🎮 *Example:* If you think it's Messi, just type *MESSI*`;
+        
+        return await reply(sock, msg, question);
+    }
+    
+    // If guess provided, check it
+    if (guess) {
+        const normalizedGuess = guess.toUpperCase().trim();
+        const correctAnswer = game.player.name;
+        
+        // Check if already guessed
+        if (game.guesses.includes(normalizedGuess)) {
+            return await reply(sock, msg, `🔄 You already guessed *${normalizedGuess}*!\n\n📊 Your guesses: ${game.guesses.join(', ')}\n⏱️ Time left: ${Math.floor((FOOTBALLPLAYER_TIMEOUT - (Date.now() - game.startTime)) / 1000)}s\n\n🎮 Try a different answer!`);
+        }
+        
+        // Add to guesses
+        game.guesses.push(normalizedGuess);
+        
+        // Check if correct
+        if (normalizedGuess === correctAnswer) {
+            const attempts = game.guesses.length;
+            const timeTaken = Math.floor((Date.now() - game.startTime) / 1000);
+            footballPlayerGames.delete(chatId);
+            
+            await reply(sock, msg, `🎉 *CORRECT!* 🎉\n\n⚽ The answer is: *${correctAnswer}*\n\n📊 *Player Details:*\n🏟️ Club: ${game.player.club} (#${game.player.clubJersey})\n🌍 National: ${game.player.national} (#${game.player.nationalJersey})\n\n🏆 Attempts: ${attempts}\n⏱️ Time: ${timeTaken}s\n\n🎮 Type !footballplayer to play again!`);
+        } else {
+            await reply(sock, msg, `❌ *Wrong!* ❌\n\n🎯 Your guess: ${normalizedGuess}\n📊 Total attempts: ${game.guesses.length}\n⏱️ Time left: ${Math.floor((FOOTBALLPLAYER_TIMEOUT - (Date.now() - game.startTime)) / 1000)}s\n\n💡 *Hint:* Check the clues again!\n🎮 Keep trying!`);
+        }
+    } else {
+        // Show current game status
+        const clubFirstLetter = game.player.club.charAt(0);
+        const nationalFirstLetter = game.player.national.charAt(0);
+        const nameLastLetter = game.player.name.charAt(game.player.name.length - 1);
+        
+        return await reply(sock, msg, `⚽ *GAME IN PROGRESS* ⚽\n\n🔍 *Clues:*\n📌 Jersey for club: *${game.player.clubJersey}*\n📌 Jersey for national: *${game.player.nationalJersey}*\n🏟️ Club starts with: *${clubFirstLetter}*\n🌍 National starts with: *${nationalFirstLetter}*\n📝 Name ends with: *${nameLastLetter}*\n\n📊 Guesses so far: ${game.guesses.length > 0 ? game.guesses.join(', ') : 'None'}\n⏱️ Time left: ${Math.floor((FOOTBALLPLAYER_TIMEOUT - (Date.now() - game.startTime)) / 1000)}s\n\n🎮 Type the player's last name to guess!`);
+    }
+}
+
+// Football Trivia Game
+async function handleFootballTrivia(sock, msg, year) {
+    const chatId = msg.key.remoteJid;
+    
+    // If no year specified, show instructions
+    if (!year) {
+        return await reply(sock, msg, `⚽ *FOOTBALL TRIVIA* ⚽\n\n📝 *How to play:*\nChoose a year to get trending football trivia questions!\n\n🎯 *Available Years:*\n• 2025 - Recent season highlights\n• 2026 - World Cup special\n\n💡 *Usage:*\n!footballtrivia 2025\n!footballtrivia 2026\n\n🎮 *Pick a year to start!*`);
+    }
+    
+    // Validate year
+    if (year !== '2025' && year !== '2026') {
+        return await reply(sock, msg, `❌ *Invalid year!*\n\n📅 Available years: 2025 or 2026\n\n💡 *Example:* !footballtrivia 2025`);
+    }
+    
+    // Load questions for the selected year
+    const triviaQuestions = require(`./football-trivia-${year}.js`);
+    
+    // Get recent questions for this chat to avoid repetition
+    let recentQuestions = footballTriviaRecentQuestions.get(chatId) || [];
+    
+    // Filter out recently asked questions
+    let availableQuestions = triviaQuestions.filter((q, index) => 
+        !recentQuestions.some(recent => recent.year === year && recent.index === index)
+    );
+    
+    // If we've exhausted all questions, reset the recent list
+    if (availableQuestions.length === 0) {
+        recentQuestions = recentQuestions.filter(recent => recent.year !== year);
+        availableQuestions = triviaQuestions;
+    }
+    
+    // Select random question
+    const randomIndex = Math.floor(Math.random() * availableQuestions.length);
+    const actualIndex = triviaQuestions.indexOf(availableQuestions[randomIndex]);
+    const selectedQuestion = availableQuestions[randomIndex];
+    
+    // Add to recent questions list
+    recentQuestions.push({ year, index: actualIndex });
+    if (recentQuestions.length > MAX_RECENT_TRIVIA) {
+        recentQuestions.shift(); // Remove oldest
+    }
+    footballTriviaRecentQuestions.set(chatId, recentQuestions);
+    
+    // Store game state
+    footballTriviaGames.set(chatId, {
+        question: selectedQuestion.q,
+        answer: selectedQuestion.a,
+        year: year,
+        attempts: 0
+    });
+    
+    // Send question
+    const triviaMessage = `⚽ *FOOTBALL TRIVIA ${year}* ⚽\n\n❓ *Question:*\n${selectedQuestion.q}\n\n💡 *How to answer:* Reply with your answer\n📝 *Example:* Manchester City\n\n🎮 *Good luck!*`;
+    
+    await reply(sock, msg, triviaMessage);
 }
 
 // Word Chain Game
@@ -2210,6 +2580,31 @@ async function handleMessage(sock, msg) {
                 break;
             case '!hangman':
                 await handleHangman(sock, msg, args[0]);
+                break;
+            case '!footballteam':
+                await handleFootballTeam(sock, msg, args[0]);
+                break;
+            case '!footballplayer':
+                await handleFootballPlayer(sock, msg, argstr);
+                break;
+            case '!footballtrivia':
+                // Check if user is answering an active trivia question
+                if (footballTriviaGames.has(msg.key.remoteJid) && argstr) {
+                    const game = footballTriviaGames.get(msg.key.remoteJid);
+                    const userAnswer = argstr.toUpperCase().trim();
+                    const correctAnswer = game.answer.toUpperCase().trim();
+                    
+                    game.attempts++;
+                    
+                    if (userAnswer === correctAnswer) {
+                        footballTriviaGames.delete(msg.key.remoteJid);
+                        await reply(sock, msg, `🎉 *CORRECT!* 🎉\n\n✅ Answer: ${game.answer}\n📊 Attempts: ${game.attempts}\n📅 Year: ${game.year}\n\n🎮 Type !footballtrivia ${game.year} to play again!`);
+                    } else {
+                        await reply(sock, msg, `❌ *Wrong Answer!* ❌\n\n🎯 Your answer: ${argstr}\n📊 Attempts: ${game.attempts}\n\n💡 Try again or type !footballtrivia ${game.year} for a new question!`);
+                    }
+                } else {
+                    await handleFootballTrivia(sock, msg, args[0]);
+                }
                 break;
             case '!tictactoe':
                 await handleTicTacToe(sock, msg, args[0]);

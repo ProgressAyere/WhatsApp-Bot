@@ -1,0 +1,35 @@
+// Football Trivia 2025 - 30 Trending Questions
+// Content rephrased for compliance with licensing restrictions
+
+module.exports = [
+    { q: "Which team won the Premier League title in the 2024/25 season?", a: "Manchester City" },
+    { q: "Who was the Premier League top scorer in 2024/25?", a: "Erling Haaland" },
+    { q: "Which striker moved from Tottenham to Bayern Munich in 2024?", a: "Harry Kane" },
+    { q: "Who won the UEFA Champions League in 2024/25?", a: "Real Madrid" },
+    { q: "Which team won La Liga in 2024/25?", a: "Real Madrid" },
+    { q: "Who scored the winning goal in the 2025 Champions League Final?", a: "Vinicius Junior" },
+    { q: "Which club signed Jude Bellingham from Borussia Dortmund?", a: "Real Madrid" },
+    { q: "Who won the Ballon d'Or in 2024?", a: "Vinicius Junior" },
+    { q: "Which team won Serie A in 2024/25?", a: "Inter Milan" },
+    { q: "Who is the top scorer in La Liga 2024/25?", a: "Robert Lewandowski" },
+    { q: "Which country won the Copa America 2024?", a: "Argentina" },
+    { q: "Who won the UEFA Euro 2024?", a: "Spain" },
+    { q: "Which player won the Golden Boot at Euro 2024?", a: "Harry Kane" },
+    { q: "Who scored the winning goal in the Euro 2024 final?", a: "Mikel Oyarzabal" },
+    { q: "Which country won the Africa Cup of Nations 2024?", a: "Ivory Coast" },
+    { q: "Who is Manchester City's manager in 2025?", a: "Pep Guardiola" },
+    { q: "Which team won the FA Cup in 2024/25?", a: "Manchester City" },
+    { q: "Who is the youngest player to score in Euro 2024?", a: "Lamine Yamal" },
+    { q: "Which club does Cole Palmer play for in 2025?", a: "Chelsea" },
+    { q: "Who won the UEFA Champions League Golden Boot 2024/25?", a: "Kylian Mbappe" },
+    { q: "Which French striker joined Real Madrid in 2024?", a: "Kylian Mbappe" },
+    { q: "Who is Arsenal's manager in 2025?", a: "Mikel Arteta" },
+    { q: "Which team finished second in the Premier League 2024/25?", a: "Arsenal" },
+    { q: "Who won the Bundesliga in 2024/25?", a: "Bayern Munich" },
+    { q: "Which club signed Declan Rice from West Ham?", a: "Arsenal" },
+    { q: "Who is the captain of Argentina in 2025?", a: "Lionel Messi" },
+    { q: "Which team won the Coppa Italia in 2024/25?", a: "Juventus" },
+    { q: "Who is Liverpool's manager in 2025?", a: "Jurgen Klopp" },
+    { q: "Which player scored the most goals in Copa America 2024?", a: "Lautaro Martinez" },
+    { q: "Who won the Golden Ball at Euro 2024?", a: "Rodri" }
+];

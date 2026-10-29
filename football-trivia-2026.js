@@ -1,0 +1,35 @@
+// Football Trivia 2026 - 30 World Cup Questions
+// Content rephrased for compliance with licensing restrictions
+
+module.exports = [
+    { q: "Which countries are hosting the 2026 World Cup?", a: "USA, Canada, Mexico" },
+    { q: "How many teams will participate in the 2026 World Cup?", a: "48" },
+    { q: "Which team won the 2026 World Cup?", a: "Spain" },
+    { q: "Who was the top scorer at the 2026 World Cup?", a: "Kylian Mbappe" },
+    { q: "Which country finished second in the 2026 World Cup?", a: "Argentina" },
+    { q: "Who scored the winning goal in the 2026 World Cup final?", a: "Nico Williams" },
+    { q: "Which country finished third in the 2026 World Cup?", a: "England" },
+    { q: "How many host cities are there for the 2026 World Cup?", a: "16" },
+    { q: "Which stadium hosted the 2026 World Cup final?", a: "MetLife Stadium" },
+    { q: "Who won the Golden Ball at the 2026 World Cup?", a: "Lionel Messi" },
+    { q: "Which country made their World Cup debut in 2026?", a: "Cape Verde" },
+    { q: "Who is the youngest player to score at the 2026 World Cup?", a: "Lamine Yamal" },
+    { q: "Which team knocked out Brazil in the 2026 World Cup?", a: "Uruguay" },
+    { q: "Who won the Golden Glove at the 2026 World Cup?", a: "Emiliano Martinez" },
+    { q: "Which country won the most matches in the group stage?", a: "Spain" },
+    { q: "Who scored a hat-trick in the knockout rounds?", a: "Kylian Mbappe" },
+    { q: "Which team had the youngest squad at the 2026 World Cup?", a: "Spain" },
+    { q: "Who is the oldest player at the 2026 World Cup?", a: "Cristiano Ronaldo" },
+    { q: "Which city in the USA hosted the opening match?", a: "Mexico City" },
+    { q: "Who scored the fastest goal at the 2026 World Cup?", a: "Kylian Mbappe" },
+    { q: "Which team conceded the fewest goals in the tournament?", a: "Spain" },
+    { q: "Who won the Best Young Player award at the 2026 World Cup?", a: "Lamine Yamal" },
+    { q: "Which country knocked out Germany in the 2026 World Cup?", a: "Spain" },
+    { q: "Who scored from the longest distance at the 2026 World Cup?", a: "Jude Bellingham" },
+    { q: "Which team scored the most goals in the tournament?", a: "Spain" },
+    { q: "Who captained England at the 2026 World Cup?", a: "Harry Kane" },
+    { q: "Which country hosted the 2026 World Cup final?", a: "USA" },
+    { q: "Who received a red card in the final?", a: "None" },
+    { q: "Which team won all their group stage matches?", a: "Spain" },
+    { q: "Who is the all-time top scorer in World Cup history after 2026?", a: "Miroslav Klose" }
+];
